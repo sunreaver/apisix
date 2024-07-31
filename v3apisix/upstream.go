@@ -35,14 +35,15 @@ type UpstreamTLS struct {
 }
 
 type UpstreamKeepalivePool struct {
-	Size        int `json:"size,omitempty"`         // 连接池大小
-	IdleTimeout int `json:"idle_timeout,omitempty"` // 空闲连接超时时间，单位秒
-	Requests    int `json:"requests,omitempty"`     // 最大请求数
+	Size        int `json:"size,omitempty"`         // 连接池大小，默认 320
+	IdleTimeout int `json:"idle_timeout,omitempty"` // 空闲连接超时时间，单位秒，默认 60s
+	Requests    int `json:"requests,omitempty"`     // 最大请求数，默认 1000
 }
 
 // 负载均衡上游.
 // https://apisix.apache.org/zh/docs/apisix/3.8/admin-api/#upstream-uri
 type Upstream struct {
+	ID            string                 `json:"id,omitempty"`             // 负载均衡上游的唯一标识符。
 	Name          string                 `json:"name,omitempty"`           // 上游名称。
 	Desc          string                 `json:"desc,omitempty"`           // 上游描述。
 	Type          LBType                 `json:"type,omitempty"`           // 负载均衡算法，默认值是roundrobin。
@@ -60,4 +61,8 @@ type Upstream struct {
 	Scheme        string                 `json:"scheme,omitempty"`         // 请求上游的协议，对于 7 层代理，可选值为 [http, https, grpc, grpcs]。对于 4 层代理，可选值为 [tcp, udp, tls]。默认值为 http
 	TLS           *UpstreamTLS           `json:"tls,omitempty"`            // TLS 配置
 	KeepalivePool *UpstreamKeepalivePool `json:"keepalive_pool,omitempty"` // 连接池配置
+}
+
+func (u *Upstream) SourcePath() string {
+	return "/apisix/admin/upstreams/" + u.ID
 }

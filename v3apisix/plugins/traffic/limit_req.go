@@ -40,7 +40,7 @@ type LimitReq struct {
 
 	KeyType KeyTypeEnum `json:"key_type,omitempty"` // 要使用的用户指定 key 的类型。
 
-	KeyName          KeyEnum `json:"key,omitempty"`               // 用来做请求计数的依据，当前接受的 key 有：remote_addr（客户端 IP 地址），server_addr（服务端 IP 地址）, 请求头中的 X-Forwarded-For 或 X-Real-IP，consumer_name（Consumer 的 username）。
+	KeyName          KeyEnum `json:"key,required"`                // 用来做请求计数的依据，当前接受的 key 有：remote_addr（客户端 IP 地址），server_addr（服务端 IP 地址）, 请求头中的 X-Forwarded-For 或 X-Real-IP，consumer_name（Consumer 的 username）。
 	RejectedCode     int     `json:"rejected_code,omitempty"`     // 当超过阈值的请求被拒绝时，返回的 HTTP 状态码。
 	RejectedMsg      string  `json:"rejected_msg,omitempty"`      // 当超过阈值的请求被拒绝时，返回的响应体。
 	NoDelay          bool    `json:"nodelay,omitempty"`           // 当设置为 true 时，请求速率超过 rate 但没有超过（rate + burst）的请求不会加上延迟；当设置为 false，则会加上延迟。

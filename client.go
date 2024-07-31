@@ -48,7 +48,7 @@ func (c *ApiSixClient) Create(ctx context.Context, source Sourcer) (*Response, e
 
 // 更新资源
 func (c *ApiSixClient) Update(ctx context.Context, source Sourcer) (*Response, error) {
-	return c.send(ctx, http.MethodPatch, source)
+	return c.send(ctx, http.MethodPut, source) // 这里不用patch，因为是全量更新
 }
 
 // 删除资源
@@ -86,8 +86,6 @@ func (c *ApiSixClient) send(ctx context.Context, method string, source Sourcer) 
 	var resp Response
 	if err := json.NewDecoder(respBody.Body).Decode(&resp); err != nil {
 		return nil, errors.Wrap(err, "response decode")
-	} else if resp.Code != 0 {
-		return &resp, errors.Errorf("response code: %d, message: %s", resp.Code, resp.Message)
 	}
 	return &resp, nil
 }

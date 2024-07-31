@@ -1,20 +1,16 @@
 package apisix
 
+import "path"
+
 type Response struct {
-	Code      int            `json:"code"`
-	Message   string         `json:"message"`
-	Data      map[string]any `json:"data"`
-	RequestID string         `json:"request_id"`
+	Key  string         `json:"key"`
+	Data map[string]any `json:"value"`
 }
 
 func (r Response) ID() string {
-	if r.Data == nil {
+	id := path.Base(r.Key)
+	if id == "." || id == "/" {
 		return ""
 	}
-	idAny, ok := r.Data["id"]
-	if !ok {
-		return ""
-	}
-	id, _ := idAny.(string)
 	return id
 }
