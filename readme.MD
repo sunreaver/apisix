@@ -7,7 +7,6 @@ package main
 
 import (
     "context"
-    "encoding/json"
     "fmt"
     "time"
 
@@ -20,8 +19,9 @@ import (
 )
 
 func main() {
+    // TODO: Implement your test cases here.
     upstream := v3apisix.Upstream{
-        ID:   "m'y_" + "1234567890",
+        ID:   "my_test_" + "1234567890",
         Name: "a",
         Nodes: []v3apisix.UpstreamNode{
             {
@@ -43,17 +43,32 @@ func main() {
         },
     }
     s := v3apisix.Service{
-        ID:              "my_prefix_" + "1234567890",
+        ID:              "my_test_" + "1234567890",
         Name:            "a",
         Desc:            "test-a-1",
         Upstream:        upstream,
         EnableWebsocket: false,
     }
+
+    client := apisix.NewClient(apisix.Config{
+        Addr:    "https://apisix-api.com",
+        ApiKey:  "edd1c9f034335f136f87ad84b625c8f1",
+        Timeout: timesize.Duration(time.Second * 5),
+    })
+
+    resp, err := client.Create(context.TODO(), &s)
+    if err != nil {
+        fmt.Println(err)
+        panic(err.Error())
+    } else {
+        fmt.Printf("%+v\n", resp)
+    }
+
     t := v3apisix.Route{
-        ID:   "my_prefix_" + "1234567890",
+        ID:   "my_test_" + "1234567890",
         Name: "a",
-        Uri:  "/aops/bac/*",
-        Host: "aops.sunreaver.cc",
+        Uri:  "/mypath/bac/*",
+        Host: "myrouter.com",
         Plugins: plugins.Plugins{
             &traffic.LimitReq{
                 Rate:    10,
@@ -63,31 +78,33 @@ func main() {
             &transformation.ProxyRewrite{
                 Scheme: "http",
                 RegexUri: []string{
-                    "/aops/bac/(.*)", "/bac/$1",
+                    "/mypath/bac/(.*)", "/bac/$1",
                 },
             },
         },
         Status:    0,
-        ServiceId: "my_prefix_" + "1234567890",
+        ServiceId: resp.ID(),
     }
-    body, _ := json.Marshal(t)
-    fmt.Println(string(body))
 
-    client := apisix.NewClient(apisix.Config{
-        Addr:    "https://apisix.com",
-        ApiKey:  "edd1c9f034335f136f87ad84b625c8f1",
-        Timeout: timesize.Duration(time.Second * 5),
-    })
-
-    resp, err := client.Delete(context.TODO(), &t)
+    resp, err = client.Create(context.TODO(), &t)
     if err != nil {
         fmt.Println(err)
+        panic(err.Error())
+    } else {
+        fmt.Printf("%+v\n", resp)
+    }
+
+    resp, err = client.Delete(context.TODO(), &t)
+    if err != nil {
+        fmt.Println(err)
+        panic(err.Error())
     } else {
         fmt.Printf("%+v\n", resp)
     }
     resp, err = client.Delete(context.TODO(), &s)
     if err != nil {
         fmt.Println(err)
+        panic(err.Error())
     } else {
         fmt.Printf("%+v\n", resp)
     }
