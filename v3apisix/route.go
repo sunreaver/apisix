@@ -15,7 +15,7 @@ type Route struct {
 	ID      string         `json:"id"`                // 路由 ID。必备字段，Create/Update/Delete 时需要指定。
 	Name    string         `json:"name,omitempty"`    // 路由名称。
 	Desc    string         `json:"desc,omitempty"`    // 路由描述信息。
-	Uri     string         `json:"uri"`               // 匹配规则，路径，支持正则和前缀匹配。
+	Uris    []string       `json:"uris"`              // 匹配规则，路径，支持正则和前缀匹配。
 	Plugins map[string]any `json:"plugins,omitempty"` // 插件列表，可以配置多个插件。
 	// Script 与 Plugin 不兼容，并且 Script 优先执行 Script，这意味着配置 Script 后，Route 上配置的 Plugin 将不被执行。
 	// 理论上，在 Script 中可以编写任意 Lua 代码，你也可以直接调用已有的插件以复用已有的代码。
