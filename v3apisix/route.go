@@ -21,7 +21,7 @@ type Route struct {
 	// 理论上，在 Script 中可以编写任意 Lua 代码，你也可以直接调用已有的插件以复用已有的代码。
 	Script      string      `json:"script,omitempty"`
 	ServiceId   string      `json:"service_id,required"`    // 需要绑定的 Service id
-	Host        string      `json:"host,omitempty"`         // 匹配规则，域名，比如 foo.com；也支持泛域名，比如 *.foo.com。
+	Host        []string    `json:"hosts,omitempty"`        // 匹配规则，域名，比如 foo.com；也支持泛域名，比如 *.foo.com。
 	RemoteAddrs []string    `json:"remote_addrs,omitempty"` // 匹配规则，表示允许有多个不同 IP 地址，符合其中任意一个即可。
 	Methods     []string    `json:"methods,omitempty"`      // 匹配规则，请求方法，比如 GET、POST 等。
 	Priority    int         `json:"priority,omitempty"`     // 匹配规则，优先级，值越小优先级越高。
