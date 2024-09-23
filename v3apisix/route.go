@@ -26,7 +26,7 @@ type Route struct {
 	Methods     []string    `json:"methods,omitempty"`      // 匹配规则，请求方法，比如 GET、POST 等。
 	Priority    int         `json:"priority,omitempty"`     // 匹配规则，优先级，值越小优先级越高。
 	Vars        vars.Vars   `json:"vars,omitempty"`         // 匹配规则，支持通过请求头，请求参数、Cookie 进行路由匹配。
-	Status      RouteEnable `json:"status,omitempty"`       // 路由状态，1 表示启用，0 表示禁用。
+	Status      RouteEnable `json:"status"`                 // 路由状态，1 表示启用，0 表示禁用。
 }
 
 func (r Route) SourcePath() string {
