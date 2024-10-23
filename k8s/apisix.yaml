@@ -1,25 +1,18 @@
-# namespace: apisix
-apiVersion: v1  # 指定api版本，此值必须在kubectl api-versions中 
-kind: Namespace  # 指定创建资源的角色/类型  
-metadata:  # 资源的元数据/属性
-  name: apisix # 资源的名字，在同一个namespace中必须唯一
-
----
 # Deployment 部署
 apiVersion: apps/v1  # 指定api版本，此值必须在kubectl api-versions中 
 kind: Deployment  # 指定创建资源的角色/类型  
 metadata:  # 资源的元数据/属性
-  name: apisix-a-dep  # 资源的名字，在同一个namespace中必须唯一
-  namespace: apisix # 部署在哪个namespace中
+  name: apisix  # 资源的名字，在同一个namespace中必须唯一
+  namespace: www # 部署在哪个namespace中
   labels:  # 设定资源的标签
-    app: dev-a-apisix
+    app: apisix
     version: stable
 spec: # 资源规范字段
   replicas: 4 # 声明副本数目
   revisionHistoryLimit: 3 # 保留历史版本
   selector: # 选择器
     matchLabels: # 匹配标签
-      app: dev-a-apisix
+      app: apisix
       version: stable
   strategy: # 策略
     rollingUpdate: # 滚动更新
@@ -29,7 +22,7 @@ spec: # 资源规范字段
   template: # 模版
     metadata: # 资源的元数据/属性
       labels: # 设定资源的标签
-        app: dev-a-apisix
+        app: apisix
         version: stable
     spec: # 资源规范字段
       containers:
@@ -45,34 +38,29 @@ spec: # 资源规范字段
             cpu: 100m
             memory: 256Mi
         livenessProbe: # pod 内部健康检查的设置
-          httpGet: # 通过httpget检查健康，返回200-399之间，则认为容器正常
-            path: /healthCheck # URI地址
-            port: 9080 # 端口
-            scheme: HTTP # 协议
-            # host: 127.0.0.1 # 主机地址
+          tcpSocket:
+            port: 9080
           initialDelaySeconds: 30 # 表明第一次检测在容器启动后多长时间后开始
           timeoutSeconds: 5 # 检测的超时时间
           periodSeconds: 30 # 检查间隔时间
           successThreshold: 1 # 成功门槛
           failureThreshold: 5 # 失败门槛，连接失败5次，pod杀掉，重启一个新的pod
         readinessProbe: # Pod 准备服务健康检查设置
-          httpGet:
-            path: /healthCheck
+          tcpSocket:
             port: 9080
-            scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 5
-        #也可以用这种方法  
-        #exec: 执行命令的方法进行监测，如果其退出码不为0，则认为容器正常  
-        #  command:  
-        #    - cat  
-        #    - /tmp/health  
-        #也可以用这种方法  
-        #tcpSocket: # 通过tcpSocket检查健康 
-        #  port: number
+          #也可以用这种方法  
+          #exec: 执行命令的方法进行监测，如果其退出码不为0，则认为容器正常  
+          #  command:  
+          #    - cat  
+          #    - /tmp/health  
+          #也可以用这种方法  
+          #tcpSocket: # 通过tcpSocket检查健康 
+          #  port: number
         ports:
           - name: http-9080 # 名称
             containerPort: 9080 # 容器开发对外的端口
@@ -91,16 +79,27 @@ spec: # 资源规范字段
             protocol: TCP # 协议
       # imagePullSecrets: # 镜像仓库拉取密钥
       #   - name: harbor-certification
+        volumeMounts: # 挂载的存储卷声明
+          - name: apisix # 挂载卷名称
+            mountPath: /usr/local/apisix/conf/config.yaml # 挂载路径
+            subPath: config.yaml # 挂载路径下的子目录
+          - name: apisix # 挂载卷名称
+            mountPath: /usr/local/apisix/conf/tf_conf.yaml # 挂载路径
+            subPath: tf_conf.yaml # 挂载路径下的子目录
+      volumes: # 挂载的存储卷配置
+        - name: apisix # 名称
+          configMap: # 挂载配置字典
+            name: apisix # 配置字典名称
 
 ---
 #service
 apiVersion: v1  #service API版本， service.apiVersion  
 kind: Service #类型为service  
 metadata: #定义service元数据，service.metadasvcta  
-  name: apisix-a-svc  # 定义Service名称
-  namespace: apisix  #定义命名空间
+  name: apisix  # 定义Service名称
+  namespace: www  #定义命名空间
   labels: #自定义标签，service.metadata.labels
-    app: apisix-a-svc  #定义service标签的内容
+    app: apisix  #定义service标签的内容
   annotations:   # 备注
     creator: admin # 创建人
 spec:  #定义service的详细信息，service.spec  
@@ -109,29 +108,14 @@ spec:  #定义service的详细信息，service.spec
       protocol: TCP       # 定义协议
       port: 9080         # service端口
       targetPort: 9080   # 目标pod端口
-      nodePort: 39080     # 对外暴露的端口
-    - name: http-9180    # 定义端口名称
-      protocol: TCP       # 定义协议
-      port: 9180         # service端口
-      targetPort: 9080   # 目标pod端口
-      nodePort: 39180     # 对外暴露的端口
+      nodePort: 31080     # 对外暴露的端口
     - name: http-9091    # 定义端口名称
       protocol: TCP       # 定义协议
       port: 9091         # service端口
       targetPort: 9091   # 目标pod端口
-      nodePort: 39091     # 对外暴露的端口
-    - name: http-9092    # 定义端口名称
-      protocol: TCP       # 定义协议
-      port: 9092         # service端口
-      targetPort: 9092   # 目标pod端口
-      nodePort: 39092     # 对外暴露的端口
-    - name: http-9443
-      protocol: TCP
-      port: 9443
-      targetPort: 9443
-      nodePort: 39443
+      nodePort: 31091     # 对外暴露的端口
   selector:  #service的标签选择器，定义要访问的目标pod
-    app: dev-a-apisix # 将流量路到选择的pod上，须等于Deployment.spec.selector.matchLabels
+    app: apisix # 将流量路到选择的pod上，须等于Deployment.spec.selector.matchLabels
     version: stable # 同上两者条件满足时生效
   type: NodePort  #service的类型，定义服务的访问方式，默认为ClusterIP， service.spec.type
   sessionAffinity: None

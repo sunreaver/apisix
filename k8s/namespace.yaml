@@ -1,0 +1,5 @@
+# namespace: apisix
+apiVersion: v1  # 指定api版本，此值必须在kubectl api-versions中 
+kind: Namespace  # 指定创建资源的角色/类型  
+metadata:  # 资源的元数据/属性
+  name: www # 资源的名字，在同一个namespace中必须唯一
