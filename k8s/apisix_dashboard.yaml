@@ -99,3 +99,35 @@ spec:  #定义service的详细信息，service.spec
   type: ClusterIP  #service的类型，定义服务的访问方式，默认为ClusterIP， service.spec.type
   sessionAffinity: None
   externalTrafficPolicy: Cluster
+
+---
+#ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard
+  namespace: www
+  labels:
+    name: dashboard
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: dashboard.apisix-a.tf.cn
+    http:
+      paths:
+      - pathType: Prefix
+        path: /(.*)
+        backend:
+          service:
+            name: dashboard
+            port: 
+              number: 9000
+      # - pathType: Prefix
+      #   path: /\\/?(.*)
+      #   backend:
+      #     service:
+      #       name: server
+      #       port: 
+      #         number: 80
