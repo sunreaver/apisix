@@ -5,22 +5,23 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if [ -z $2 ]; then
-    echo "Usage: $0 <username> <环境后缀:生产p,研发d>"
-    exit 1
-fi
+# if [ -z $2 ]; then
+#     echo "Usage: $0 <username> <环境后缀:生产p,研发d>"
+#     exit 1
+# fi
 
-USER=$1-$2
+# USER=$1-$2
 
+USER=$1
 
 mkdir $USER
-useradd $USER -s /bin/zsh
+useradd $USER -s /bin/bash
 
 echo "User $USER added successfully"
 
 cp -r ~/.ssh /home/$USER
-cp -r ~/.oh-my-zsh /home/$USER
-cp -r ~/.zshrc /home/$USER
+# cp -r ~/.oh-my-zsh /home/$USER
+cp -r ~/.bashrc /home/$USER
 cp -r ~/.vimrc /home/$USER
 mkdir /home/$USER/.kube
 
