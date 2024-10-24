@@ -1,0 +1,36 @@
+apiVersion: capsule.clastix.io/v1beta2
+kind: Tenant
+metadata:
+  name: <exp>
+spec:
+  owners:
+  - name: <exp>
+    kind: User
+  namespaceOptions:
+    quota: 1
+  resourceQuotas:
+    scope: Tenant
+    items:
+#    - hard:
+#        limits.cpu: 8
+#        limits.memory: 6
+#        requests.cpu: 1500m
+#        requests.memory: 1000Mi
+    - hard:
+        pods: 20
+#  limitRanges:
+#    items:
+#      - limits:
+#          - type: Container
+#            defaultRequest:
+#              cpu: "800m"
+#              memory: "512Mi"
+#            default:
+#              cpu: "2000m"
+#              memory: "1500Mi"
+#      - limits:
+#          - type: PersistentVolumeClaim
+#            min:
+#              storage: "1Gi"
+#            max:
+#              storage: "40Gi"
