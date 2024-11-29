@@ -19,9 +19,14 @@ const (
 )
 
 type UpstreamNode struct {
-	Host   string `json:"host,omitempty"`   // 地址，可以是 IP 或域名
-	Port   int    `json:"port,omitempty"`   // 端口
-	Weight int    `json:"weight,omitempty"` // 权重
+	Host     string   `json:"host,omitempty"`     // 地址，可以是 IP 或域名
+	Port     int      `json:"port,omitempty"`     // 端口
+	Weight   int      `json:"weight,omitempty"`   // 权重
+	Metadata Metadata `json:"metadata,omitempty"` // 元数据
+}
+
+type Metadata struct {
+	Zone string `json:"zone,omitempty"` // 数据中心
 }
 
 type UpstreamTimeout struct {
