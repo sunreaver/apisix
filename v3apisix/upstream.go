@@ -66,6 +66,12 @@ type Upstream struct {
 	Scheme        string                 `json:"scheme,omitempty"`         // 请求上游的协议，对于 7 层代理，可选值为 [http, https, grpc, grpcs]。对于 4 层代理，可选值为 [tcp, udp, tls]。默认值为 http
 	TLS           *UpstreamTLS           `json:"tls,omitempty"`            // TLS 配置
 	KeepalivePool *UpstreamKeepalivePool `json:"keepalive_pool,omitempty"` // 连接池配置
+	NacosConfig
+}
+
+type NacosConfig struct {
+	GroupName   string `json:"groupName,omitempty"`
+	NamespaceID string `json:"namespaceId,omitempty"`
 }
 
 func (u *Upstream) SourcePath() string {
