@@ -70,8 +70,8 @@ type Upstream struct {
 }
 
 type NacosConfig struct {
-	GroupName   string `json:"groupName,omitempty"`
-	NamespaceID string `json:"namespaceId,omitempty"`
+	GroupName   string `json:"group_ame,omitempty"`
+	NamespaceID string `json:"namespace_id,omitempty"`
 }
 
 func (u *Upstream) SourcePath() string {
