@@ -71,7 +71,7 @@ type Upstream struct {
 }
 
 type NacosConfig struct {
-	GroupName   string `json:"group_ame,omitempty"`
+	GroupName   string `json:"group_name,omitempty"`
 	NamespaceID string `json:"namespace_id,omitempty"`
 }
 
