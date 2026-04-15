@@ -9,13 +9,14 @@ const (
 	LBTypeLeastConn  LBType = "least_conn"
 )
 
-type DiscoveryType string // eureka,nacos,consul,dns
+type DiscoveryType string // eureka,nacos,consul,dns,kubernetes
 
 const (
-	DiscoveryTypeDNS    DiscoveryType = "dns"
-	DiscoveryTypeEureka DiscoveryType = "eureka"
-	DiscoveryTypeNacos  DiscoveryType = "nacos"
-	DiscoveryTypeConsul DiscoveryType = "consul"
+	DiscoveryTypeDNS        DiscoveryType = "dns"
+	DiscoveryTypeEureka     DiscoveryType = "eureka"
+	DiscoveryTypeNacos      DiscoveryType = "nacos"
+	DiscoveryTypeConsul     DiscoveryType = "consul"
+	DiscoveryTypeKubernetes DiscoveryType = "kubernetes"
 )
 
 type UpstreamNode struct {
@@ -52,9 +53,9 @@ type Upstream struct {
 	Name          string                 `json:"name,omitempty"`           // 上游名称。
 	Desc          string                 `json:"desc,omitempty"`           // 上游描述。
 	Type          LBType                 `json:"type,omitempty"`           // 负载均衡算法，默认值是roundrobin。
-	Nodes         []UpstreamNode         `json:"nodes,omitempty"`          // [ {"host":"host", "port":80, "weight": 100} ]
-	ServiceName   string                 `json:"service_name,omitempty"`   // 服务发现时使用的服务名
-	DiscoveryType DiscoveryType          `json:"discovery_type,omitempty"` // 服务发现类型,与 service_name 配合使用。
+	Nodes         []UpstreamNode         `json:"nodes,omitempty"`          // 静态上游节点列表。[ {"host":"host", "port":80, "weight": 100} ]
+	ServiceName   string                 `json:"service_name,omitempty"`   // 服务发现时使用的服务名。Kubernetes 格式为 [namespace]/[name]:[portName]；多集群为 [id]/[namespace]/[name]:[portName]。
+	DiscoveryType DiscoveryType          `json:"discovery_type,omitempty"` // 服务发现类型，与 service_name 配合使用。
 	ChashKey      string                 `json:"key,omitempty"`            // 该选项只有类型是 chash 才有效。根据 key 来查找对应的节点 id，相同的 key 在同一个对象中，则返回相同 id。目前支持的 NGINX 内置变量有 uri, server_name, server_addr, request_uri, remote_port, remote_addr, query_string, host, hostname, arg_***，其中 arg_*** 是来自 URL 的请求参数
 	HashOn        string                 `json:"hash_on,omitempty"`        // 用于 hash 的字段，hash_on 支持的类型有 vars（NGINX 内置变量），header（自定义 header），cookie，consumer，默认值为 vars。
 	Checks        any                    `json:"checks,omitempty"`         // 健康检查配置，目前支持的选项有 active 和 passive。
@@ -70,7 +71,7 @@ type Upstream struct {
 }
 
 type NacosConfig struct {
-	GroupName   string `json:"group_ame,omitempty"`
+	GroupName   string `json:"group_name,omitempty"`
 	NamespaceID string `json:"namespace_id,omitempty"`
 }
 
